@@ -30,14 +30,22 @@ from langchain.schema import Document
 load_dotenv()
 
 class PDFAnalyzer:
-    def __init__(self, input_folder: str = "pdf-inputs", output_folder: str = "outputs"):
+    def __init__(
+            self,
+            model: str = "gtp-3.5-turbo-instruct",
+            temperature: float = 0.3,
+            input_folder: str = "pdf-inputs",
+            output_folder: str = "outputs"
+        ):
+        self.model = model
+        self.temperature = temperature
         self.input_folder = Path(input_folder)
         self.output_folder = Path(output_folder)
         self.docs = []
         self.vectorstore = None
         
         # Initialize LLM and embeddings
-        self.llm = OpenAI(temperature=0.3)
+        self.llm = OpenAI(model=self.model, temperature=self.temperature)
         self.embeddings = OpenAIEmbeddings()
         
         # Make sure folders exist
@@ -323,7 +331,12 @@ def main():
         return
     
     # Initialize analyzer
-    analyzer = PDFAnalyzer()
+    analyzer = PDFAnalyzer(
+        model=os.getenv("OPENAI_MODEL"),
+        temperature=float(os.getenv("OPENAI_TEMPERATURE")),
+        input_folder=os.getenv("PDF_INPUT_FOLDER"),
+        output_folder=os.getenv("OUTPUT_FOLDER"),
+    )
     
     # Run analysis
     analyzer.run_analysis()
