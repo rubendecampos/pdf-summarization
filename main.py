@@ -264,7 +264,7 @@ class PDFAnalyzer:
         report_file = self.output_folder / f"summary_report_{timestamp}.md"
         with open(report_file, 'w', encoding='utf-8') as f:
             f.write(f"# PDF Analysis Report\n\n")
-            f.write(f"**Generated:** {results['processing_date']}\n")
+            f.write(f"**Generated:** {results['processing_date']}\n\n")
             f.write(f"**Files Processed:** {results['total_documents']} docs from {len(results['files_processed'])} files\n\n")
             
             # Task Lists
@@ -274,7 +274,7 @@ class PDFAnalyzer:
                     f.write(f"### {task_info['file']}\n")
                     f.write(f"**Urgency:** {task_info['urgency']}\n\n")
                     if task_info['tasks']:
-                        f.write("**Action Items:**\n")
+                        f.write("**Action Items:**\n\n")
                         for task in task_info['tasks']:
                             f.write(f"- [ ] {task}\n")
                     f.write(f"\n**Summary:**\n{task_info['summary']}\n\n")
@@ -285,16 +285,16 @@ class PDFAnalyzer:
                 for story_info in results['stories']:
                     f.write(f"### {story_info['file']}\n")
                     if story_info['characters']:
-                        f.write(f"**Characters:** {', '.join(story_info['characters'])}\n")
+                        f.write(f"**Characters:** {', '.join(story_info['characters'])}\n\n")
                     if story_info['themes']:
-                        f.write(f"**Themes:** {', '.join(story_info['themes'])}\n")
+                        f.write(f"**Themes:** {', '.join(story_info['themes'])}\n\n")
                     f.write(f"\n**Summary:**\n{story_info['summary']}\n\n")
             
             # All Summaries
             f.write("## Document Summaries\n\n")
             for filename, summary_info in results['summaries'].items():
                 f.write(f"### {filename}\n")
-                f.write(f"**Type:** {summary_info['content_type']}\n")
+                f.write(f"**Type:** {summary_info['content_type']}\n\n")
                 f.write(f"**Summary:**\n{summary_info['summary']}\n\n")
     
     def run_analysis(self): 
