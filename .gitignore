@@ -1,6 +1,7 @@
 # Input/output files
 outputs/*
 pdf-inputs/*
+pdf*
 !pdf-inputs/README.txt
 
 # Byte-compiled / optimized / DLL files

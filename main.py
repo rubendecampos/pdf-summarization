@@ -110,11 +110,16 @@ class PDFAnalyzer:
             input_variables=["text"],
             template="""
             Analyze the following text and categorize it. Determine:
-            1. Content type (task, story, technical document, report, etc.)
+            1. Content type (task, todo, action, story, fiction, narrative, 
+            if none of these apply, find the most suitable content type 
+            (e.g. report, technical document, etc...))
             2. Main topics/themes
             3. Key entities (people, organizations)
-            4. Urgency level (if applicable)
+            4. Urgency level (if applicable; task, todo or action)
             5. Action items or tasks (if any)
+
+            ex: If the content is similar to a task list, "content_type" should be "task"
+                If the content is a story, "content_type"  should be "story" or "fiction"
             
             Text: {text}
             
@@ -133,7 +138,7 @@ class PDFAnalyzer:
         chain = LLMChain(llm=self.llm, prompt=categorization_prompt)
         
         try:
-            result = chain.run(text=text[:3000])  # Limit text length for API
+            result = chain.run(text=text[:8000])  # Limit text length for API
             # Try to parse as JSON, fallback to text if parsing fails
             try:
                 return json.loads(result)
@@ -155,7 +160,7 @@ class PDFAnalyzer:
                 - Responsible parties
                 - Dependencies
                 
-                Format as bullet points with clear action items.
+                Format as bullet points with clear action items. (Markdown format)
                 
                 Text: {text}
                 
@@ -195,7 +200,7 @@ class PDFAnalyzer:
         chain = LLMChain(llm=self.llm, prompt=summary_prompt)
         
         try:
-            return chain.run(text=text[:4000])  # Limit text length for API
+            return chain.run(text=text[:8000])  # Limit text length for API
         except Exception as e:
             print(f"Error generating summary: {str(e)}")
             return f"Error generating summary: {str(e)}"
