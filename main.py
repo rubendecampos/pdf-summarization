@@ -66,6 +66,8 @@ class PDFAnalyzer:
             print(f"No PDF files found in {self.input_folder}")
             return []
         
+        print(f"Found {len(pdf_files)} PDF files to process...")
+
         all_docs = []
         for pdf_file in pdf_files:
             try:
@@ -79,6 +81,7 @@ class PDFAnalyzer:
                     doc.metadata['file_path'] = str(pdf_file)
                 
                 all_docs.extend(docs)
+                print(f"Loaded {len(docs)} pages from {pdf_file.name}")
                 
             except Exception as e:
                 print(f"Error loading {pdf_file.name}: {str(e)}")
@@ -88,6 +91,7 @@ class PDFAnalyzer:
         return all_docs
     
     def create_vectorstore(self):
+        """Create vector store from loaded docs"""
         if not self.docs:
             print("No docs loaded. Please load PDFs first.")
             return
@@ -98,8 +102,10 @@ class PDFAnalyzer:
         
         # Create vector store
         self.vectorstore = FAISS.from_documents(texts, self.embeddings)
+        print(f"Vector store created with {len(texts)} text chunks")
     
     def categorize_content(self, text: str) -> Dict[str, Any]:
+        """Categorize content using LLM"""
         categorization_prompt = PromptTemplate(
             input_variables=["text"],
             template="""
@@ -138,6 +144,7 @@ class PDFAnalyzer:
             return {"error": str(e)}
     
     def generate_summary(self, text: str, content_type: str = "general") -> str:
+        """Generate summary based on content type"""
         if content_type.lower() in ["task", "action", "todo"]:
             summary_prompt = PromptTemplate(
                 input_variables=["text"],
@@ -194,6 +201,7 @@ class PDFAnalyzer:
             return f"Error generating summary: {str(e)}"
     
     def process_documents(self) -> Dict[str, Any]:
+        """Process all loaded documents"""
         if not self.docs:
             print("No document to process. Load PDFs first.")
             return {}
@@ -237,6 +245,8 @@ class PDFAnalyzer:
             results["summaries"][filename] = {
                 "content_type": content_type,
                 "summary": summary,
+                "word_count": len(full_text.split()),
+                "page_count": len(pages)
             }
             
             # Add to specific categories
@@ -261,6 +271,7 @@ class PDFAnalyzer:
         return results
     
     def save_results(self, results: Dict[str, Any]):
+        """Save processing results to files"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         # Save complete results as JSON
@@ -304,8 +315,14 @@ class PDFAnalyzer:
                 f.write(f"### {filename}\n")
                 f.write(f"**Type:** {summary_info['content_type']}\n\n")
                 f.write(f"**Summary:**\n{summary_info['summary']}\n\n")
+
+        print(f"Results saved to:")
+        print(f"  - {json_file}")
+        print(f"  - {report_file}")
     
-    def run_analysis(self): 
+    def run_analysis(self):
+        print("Starting PDF analysis...")
+
         # Load PDFs
         docs = self.load_pdfs()
         if not docs:
@@ -322,9 +339,14 @@ class PDFAnalyzer:
         self.save_results(results)
         
         print("\nAnalysis complete!")
+        print(f"Processed {len(results['files_processed'])} files")
+        print(f"Found {len(results['task_lists'])} task-related docs")
+        print(f"Found {len(results['stories'])} story docs")
 
 def main():
-    
+    print("PDF Content Analyzer and Summarizer")
+    print("=" * 40)
+
     # Check for OpenAI API key
     if not os.getenv('OPENAI_API_KEY'):
         print("Warning: OPENAI_API_KEY environment variable not set.")
