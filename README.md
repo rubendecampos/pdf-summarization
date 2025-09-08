@@ -70,6 +70,28 @@ The program generates two types of output files in the `outputs` folder:
    - Task lists with checkboxes
    - Story summaries with characters and themes
 
+### Content Type Handling
+
+The analyzer intelligently handles different types of content:
+
+#### 📋 Task Documents
+- Extracts action items and to-do lists
+- Identifies deadlines and priorities
+- Assigns urgency levels
+- Formats as bullet-point task lists
+
+#### 📚 Stories/Narratives
+- Identifies main characters
+- Extracts plot summaries
+- Identifies key themes and settings
+- Provides narrative analysis
+
+#### 📄 General Documents
+- Creates comprehensive summaries
+- Identifies key points and conclusions
+- Extracts important details
+- Categorizes by topic and theme
+
 ## Configuration
 
 ### Environment Variables
@@ -118,6 +140,32 @@ Project requirements document outlining the development tasks for the Q4 release
 **Summary:**
 A compelling tale about two friends who discover a mysterious artifact...
 ```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"No PDF files found"**
+   - Ensure PDF files are placed in the `pdf-inputs` folder
+   - Check that files have `.pdf` extension
+
+2. **"OPENAI_API_KEY not set"**
+   - Set your OpenAI API key as an environment variable
+   - Copy `.env.example` to `.env` and add your key
+
+3. **Import errors**
+   - Install all dependencies: `pip install -r requirements.txt`
+   - Ensure you're using Python 3.8 or higher
+
+4. **PDF loading errors**
+   - Some PDFs may be password-protected or corrupted
+   - Check the console output for specific error messages
+
+### Performance Tips
+
+- For large PDF files, the analysis may take several minutes
+- The program processes files sequentially to avoid API rate limits
+- Vector store creation improves with more diverse content
 
 ## Dependencies
 
